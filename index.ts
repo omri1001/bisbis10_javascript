@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import dotenv from "dotenv";
-import routes from "./controllers/demoController";
+import routes from "./src/controllers/demoController";
 import client from "./db/db";
 
 //For env File
