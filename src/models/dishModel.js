@@ -7,7 +7,7 @@ const db = require('../db/db');
 const getDishesByRestaurant = async (restaurantId) => {
     try {
         console.log(`Fetching all dishes for restaurant ID: ${restaurantId}`);
-        // Selects all dishes from the database that belong to a specific restaurant
+        /// Execute SQL query to get all dishes for the specified restaurant
         const { rows } = await db.query('SELECT id, name, description, price FROM dishes WHERE restaurant_id = $1', [restaurantId]);
         console.log(`Retrieved ${rows.length} dishes`);
         return rows;
@@ -21,13 +21,14 @@ const getDishesByRestaurant = async (restaurantId) => {
 // Add a new dish to a restaurant
 const addDish = async (restaurantId, dish) => {
     const { name, description, price } = dish;
+    // Check for missing or incorrect data before insertion
     if (!name || !description || typeof price !== 'number') {
         console.error("Validation failed: invalid inputs for new dish");
         throw new Error("Invalid input data for dish");
     }
     try {
         console.log(`Adding new dish to restaurant ID: ${restaurantId}`, dish);
-        // Inserts a new dish into the dishes table and returns the inserted dish
+        // Execute SQL query to insert a new dish and return the created record
         const { rows } = await db.query(
             'INSERT INTO dishes (restaurant_id, name, description, price) VALUES ($1, $2, $3, $4) RETURNING *',
             [restaurantId, name, description, price]
@@ -40,17 +41,18 @@ const addDish = async (restaurantId, dish) => {
     }
 };
 
-// Update a dish
+// Update details of an existing dish
 const updateDish = async (dishId, restaurantId, data) => {
     let query = 'SELECT * FROM dishes WHERE id = $1 AND restaurant_id = $2';
     try {
+        // First check if the dish exists for the given ID and restaurant
         const checkResult = await db.query(query, [dishId, restaurantId]);
         if (checkResult.rows.length === 0) {
             console.log("No dish found with the specified ID and restaurant ID.");
             return null; // Or you can throw an error or handle as appropriate
         }
 
-        // Proceed with the update if the dish is found
+        // Update the dish if it exists
         query = 'UPDATE dishes SET ';
         let fieldsToUpdate = [];
         let values = [];
@@ -79,19 +81,19 @@ const updateDish = async (dishId, restaurantId, data) => {
     }
 };
 
-// Delete a dish
+// Remove a dish from the database
 const deleteDish = async (dishId) => {
     try {
         console.log(`Deleting dish ID: ${dishId} and all associated order items`);
 
-        // Start a transaction
+        // Start a transaction to ensure all related deletions are successful
         await db.query('BEGIN');
 
-        // Delete all order items related to the dish
+        // First delete related order items
         const { rowCount: orderItemsDeleted } = await db.query('DELETE FROM order_items WHERE dish_id = $1', [dishId]);
         console.log(`Deleted ${orderItemsDeleted} order items associated with dish ID: ${dishId}`);
 
-        // Delete the dish
+        // Then delete the dish itself
         const { rowCount: dishDeleted } = await db.query('DELETE FROM dishes WHERE id = $1', [dishId]);
         if (dishDeleted === 0) {
             console.log("No dish found with ID:", dishId);
@@ -100,11 +102,11 @@ const deleteDish = async (dishId) => {
         }
 
         console.log("Dish deleted successfully");
-        await db.query('COMMIT'); // Commit the transaction
+        await db.query('COMMIT'); // Commit the transaction if all deletions are successful
         return true;
     } catch (err) {
         console.error("Error deleting dish: ", err);
-        await db.query('ROLLBACK'); // Rollback the transaction on error
+        await db.query('ROLLBACK'); // Rollback the transaction in case of error
         throw err;
     }
 };

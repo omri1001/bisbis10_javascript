@@ -13,11 +13,13 @@ app.use(bodyParser.json());
 // Define the route corresponding to the controller method
 app.post('/orders', orderController.createOrder);
 
+// Group tests into a describe block
 describe('Order Controller Tests', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
+    // Test case for successfully creating an order
     test('POST /orders - successfully creates an order', async () => {
         const newOrder = {
             restaurantId: 'rest-123',
@@ -35,6 +37,7 @@ describe('Order Controller Tests', () => {
         expect(orderModel.createOrder).toHaveBeenCalledWith(newOrder);
     });
 
+    // Test case for handling errors when creating an order
     test('POST /orders - handles error when failing to create an order', async () => {
         const newOrder = {
             restaurantId: 'rest-123',

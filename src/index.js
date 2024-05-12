@@ -9,7 +9,7 @@ const ratingRoutes = require('./routes/ratingRoutes');
 dotenv.config(); // Load environment variables
 const app = express(); // Create an Express application
 const port = process.env.PORT || 8000; // Set the port
-console.log(db)
+
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use("/", restaurantRoutes); // Use the restaurant routes, mounted at '/'
 app.use("/restaurants/:id", dishRoutes); // Mount dish routes under each restaurant

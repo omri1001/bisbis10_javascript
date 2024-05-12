@@ -3,18 +3,25 @@ const dishModel = require('../../models/dishModel');
 
 jest.mock('../../db/db'); // Mocking the database module
 
+// Group tests into a describe block for the Dish Model
 describe('Dish Model', () => {
+    // Clear all mocks before each test to ensure a clean test environment
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
+    // Testing the function that fetches dishes by restaurant
     describe('getDishesByRestaurant', () => {
         it('should fetch all dishes for a specified restaurant', async () => {
+            // Mock data for dishes
             const mockDishes = [{ id: 1, name: 'Spaghetti', description: 'Italian pasta', price: 10 }];
+            // Mock the query function to resolve with the mock dishes
             db.query.mockResolvedValue({ rows: mockDishes });
 
+            // Call the function to fetch dishes and assert the results
             const dishes = await dishModel.getDishesByRestaurant('1');
             expect(dishes).toEqual(mockDishes);
+            // Verify that the query was called with the correct SQL and parameters
             expect(db.query).toHaveBeenCalledWith('SELECT id, name, description, price FROM dishes WHERE restaurant_id = $1', ['1']);
         });
 
@@ -24,6 +31,7 @@ describe('Dish Model', () => {
         });
     });
 
+    // Testing the function that adds a new dish
     describe('addDish', () => {
         const newDish = { name: 'Pizza', description: 'Cheesy pizza', price: 12 };
 
@@ -47,6 +55,7 @@ describe('Dish Model', () => {
         });
     });
 
+    // Testing the function that updates a dish
     describe('updateDish', () => {
         it('should update a dish successfully', async () => {
             const updatedDish = { name: 'Updated Pizza', description: 'Updated description', price: 15 };

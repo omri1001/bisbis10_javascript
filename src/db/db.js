@@ -1,13 +1,21 @@
 //db/db.js
+
+// Enable use of ES6 module features
 Object.defineProperty(exports, "__esModule", { value: true });
+
+// Import PostgreSQL client from 'pg' module
 const pg_1 = require("pg");
+
+// Initialize a new client instance with connection configuration
 const client = new pg_1.Client({
-    host: "localhost",
-    port: 5432,
-    user: "postgres",
-    password: "example",
-    database: "postgres",
+    host: "localhost", // Database host
+    port: 5432,        // Database port
+    user: "postgres",  // Database username
+    password: "example", // Database password
+    database: "postgres", // Database name
 });
+
+// Connect to the PostgreSQL database
 client.connect((err) => {
     if (err) {
         console.error("DB connection error", err.stack);
@@ -17,6 +25,7 @@ client.connect((err) => {
     }
 });
 
+// Function to ensure that all necessary tables exist in the database
 async function ensureTablesExist() {
     const tables = [
         { name: 'example', createSql: `CREATE TABLE IF NOT EXISTS example (id SERIAL PRIMARY KEY, data VARCHAR(255) NOT NULL);` },
@@ -27,6 +36,7 @@ async function ensureTablesExist() {
         { name: 'order_items', createSql: `CREATE TABLE IF NOT EXISTS order_items (id SERIAL PRIMARY KEY, order_id UUID NOT NULL, dish_id INTEGER NOT NULL, amount INTEGER NOT NULL, FOREIGN KEY (order_id) REFERENCES orders(id), FOREIGN KEY (dish_id) REFERENCES dishes(id));` }
     ];
 
+    // Attempt to create each table if it does not exist
     for (let table of tables) {
         try {
             const result = await client.query(table.createSql);
@@ -38,7 +48,7 @@ async function ensureTablesExist() {
 }
 
 
-// Expose the 'query' method
+// Expose the 'query' method to allow SQL queries from other parts of the application
 exports.query = async (text, params) => {
     try {
         const result = await client.query(text, params);
