@@ -40,6 +40,22 @@ The project structure follows a modular approach, dividing components into model
 - **Backend Framework**: Express.js
 - **Database**: PostgreSQL (A Docker container is used for the database environment)
 - **Other Tools**: Node.js, Docker
+
+## Docker Compose Setup
+
+To simplify the process of building and running the application, Docker Compose is used. This allows for the simultaneous setup of the application and its database environment with just two commands.
+### Building the Application
+To build the application and the associated services, run:
+```bash
+  docker-compose build
+```
+### Running the Application
+To start the application along with its services, use:
+```bash
+  docker-compose up
+```
+
+his will initialize the application and its dependencies as defined in your docker-compose.yml file, making sure everything is networked correctly without the need for manual configuration.
 ## NPM Start Process Description:
 ```bash
   npm start
