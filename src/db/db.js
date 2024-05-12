@@ -28,7 +28,6 @@ client.connect((err) => {
 // Function to ensure that all necessary tables exist in the database
 async function ensureTablesExist() {
     const tables = [
-        { name: 'example', createSql: `CREATE TABLE IF NOT EXISTS example (id SERIAL PRIMARY KEY, data VARCHAR(255) NOT NULL);` },
         { name: 'restaurants', createSql: `CREATE TABLE IF NOT EXISTS restaurants (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, isKosher BOOLEAN, cuisines TEXT[]);` },
         { name: 'dishes', createSql: `CREATE TABLE IF NOT EXISTS dishes (id SERIAL PRIMARY KEY, restaurant_id INTEGER NOT NULL, name VARCHAR(255) NOT NULL, description TEXT, price NUMERIC(10, 2), FOREIGN KEY (restaurant_id) REFERENCES restaurants(id));` },
         { name: 'orders', createSql: `CREATE TABLE IF NOT EXISTS orders (id UUID PRIMARY KEY, restaurant_id INTEGER NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (restaurant_id) REFERENCES restaurants(id));` },
